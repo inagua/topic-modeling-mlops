@@ -30,11 +30,26 @@ Goto -> http://localhost:8080
 
 
 ## Pipeline:
+
+* There is two ways to create a pipeline: 
+    * Using Python functions 
+      * Example: [old_pipeline.py](old_pipeline.py)
+    * Using Docker images 
+      * Example: [kubeflow](kubeflow)
+***
 * Two ways to run a pipeline:
   * Upload .yaml file
-    * Example in 'old_pipeline.py'
+    * Example: [pipeline_topic_modeling.yaml](kubeflow/pipeline_topic_modeling.yaml)
   * Run via python script - client 
-    * Example in './kubeflow/pipeline.py'
+    * Example: [pipeline.py](kubeflow/pipeline.py)
+
+*** 
+
+Here are some ressources to get started with Kubeflow pipeline:
+* https://medium.com/@gkkarobia/kubeflow-pipelines-part-1-lightweight-components-a4a3c8cb3f2d
+* https://towardsdatascience.com/tutorial-basic-kubeflow-pipeline-from-scratch-5f0350dc1905
+* https://github.com/kubeflow/pipelines/blob/master/samples/tutorials/Data%20passing%20in%20python%20components.ipynb
+* https://github.com/kubeflow/examples/tree/master/pipelines/mnist-pipelines
 
 
 ### Delete Kubeflow pipeline - local 
