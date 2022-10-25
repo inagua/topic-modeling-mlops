@@ -1,0 +1,6 @@
+kfp
+numpy
+spacy
+scikit-learn
+pandas
+yellowbrick

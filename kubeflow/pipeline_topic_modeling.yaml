@@ -1,0 +1,180 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: topic-modeling-pipeline-
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.14, pipelines.kubeflow.org/pipeline_compilation_time: '2022-10-25T11:23:28.278610',
+    pipelines.kubeflow.org/pipeline_spec: '{"description": "Topic Modeling Pipeline",
+      "inputs": [{"name": "paragraph"}], "name": "Topic Modeling Pipeline"}'}
+  labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.14}
+spec:
+  entrypoint: topic-modeling-pipeline
+  templates:
+  - name: create-dataframe-from-top-nearest-indices-by-clusters
+    container:
+      args: [--top_nearest_indices_by_clusters, /tmp/inputs/input-0/data, --text,
+        /tmp/inputs/input-1/data]
+      command: [python, ./create_df.py]
+      image: thekenken/create_df_from_top_nearest_indices:latest
+    inputs:
+      artifacts:
+      - {name: kmeans-top_nearest_indices_by_clusters, path: /tmp/inputs/input-0/data}
+      - {name: preprocess-input-text-paragraph, path: /tmp/inputs/input-1/data}
+    outputs:
+      artifacts:
+      - {name: create-dataframe-from-top-nearest-indices-by-clusters-documents, path: /app/documents.csv}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.14
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+  - name: embedding
+    container:
+      args: [--paragraph, /tmp/inputs/input-0/data]
+      command: [python, ./embeddings.py]
+      image: thekenken/embedding:latest
+    inputs:
+      artifacts:
+      - {name: preprocess-input-text-paragraph, path: /tmp/inputs/input-0/data}
+    outputs:
+      artifacts:
+      - {name: embedding-embeddings, path: /app/embedding.npy}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.14
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+  - name: find-optimal-k-cluster
+    container:
+      args: [--pca_result, /tmp/inputs/input-0/data]
+      command: [python, ./find_optimal_k_cluster.py]
+      image: thekenken/find_optimal_number_of_clusters:latest
+    inputs:
+      artifacts:
+      - {name: pca-dimension-reduction-pca_result, path: /tmp/inputs/input-0/data}
+    outputs:
+      artifacts:
+      - {name: find-optimal-k-cluster-optimal_k_cluster, path: /app/optimal_k_cluster.npy}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.14
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+  - name: kmeans
+    container:
+      args: [--n_clusters_optimal, /tmp/inputs/input-0/data, --pca_result, /tmp/inputs/input-1/data]
+      command: [python, ./kmeans.py]
+      image: thekenken/kmeans:latest
+    inputs:
+      artifacts:
+      - {name: find-optimal-k-cluster-optimal_k_cluster, path: /tmp/inputs/input-0/data}
+      - {name: pca-dimension-reduction-pca_result, path: /tmp/inputs/input-1/data}
+    outputs:
+      artifacts:
+      - {name: kmeans-top_nearest_indices_by_clusters, path: /app/top_nearest_indices_by_clusters.npy}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.14
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+  - name: pca-dimension-reduction
+    container:
+      args: [--embeddings, /tmp/inputs/input-0/data]
+      command: [python, ./pca.py]
+      image: thekenken/pca:latest
+    inputs:
+      artifacts:
+      - {name: embedding-embeddings, path: /tmp/inputs/input-0/data}
+    outputs:
+      artifacts:
+      - {name: pca-dimension-reduction-pca_result, path: /app/pca_result.npy}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.14
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+  - name: preprocess-input-text
+    container:
+      args: [--paragraph, '{{inputs.parameters.paragraph}}']
+      command: [python, ./preprocess_input_text.py]
+      image: thekenken/preprocess_input_text:latest
+    inputs:
+      parameters:
+      - {name: paragraph}
+    outputs:
+      artifacts:
+      - {name: preprocess-input-text-paragraph, path: /app/paragraph.csv}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.14
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+  - name: tf-idf
+    container:
+      args: [--documents_path, /tmp/inputs/input-0/data]
+      command: [python, ./tf_idf.py]
+      image: thekenken/tf_idf:latest
+    inputs:
+      artifacts:
+      - {name: create-dataframe-from-top-nearest-indices-by-clusters-documents, path: /tmp/inputs/input-0/data}
+    outputs:
+      artifacts:
+      - {name: tf-idf-tf_idf, path: /app/top_words.csv}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.14
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+  - name: topic-modeling-pipeline
+    inputs:
+      parameters:
+      - {name: paragraph}
+    dag:
+      tasks:
+      - name: create-dataframe-from-top-nearest-indices-by-clusters
+        template: create-dataframe-from-top-nearest-indices-by-clusters
+        dependencies: [kmeans, preprocess-input-text]
+        arguments:
+          artifacts:
+          - {name: kmeans-top_nearest_indices_by_clusters, from: '{{tasks.kmeans.outputs.artifacts.kmeans-top_nearest_indices_by_clusters}}'}
+          - {name: preprocess-input-text-paragraph, from: '{{tasks.preprocess-input-text.outputs.artifacts.preprocess-input-text-paragraph}}'}
+      - name: embedding
+        template: embedding
+        dependencies: [preprocess-input-text]
+        arguments:
+          artifacts:
+          - {name: preprocess-input-text-paragraph, from: '{{tasks.preprocess-input-text.outputs.artifacts.preprocess-input-text-paragraph}}'}
+      - name: find-optimal-k-cluster
+        template: find-optimal-k-cluster
+        dependencies: [pca-dimension-reduction]
+        arguments:
+          artifacts:
+          - {name: pca-dimension-reduction-pca_result, from: '{{tasks.pca-dimension-reduction.outputs.artifacts.pca-dimension-reduction-pca_result}}'}
+      - name: kmeans
+        template: kmeans
+        dependencies: [find-optimal-k-cluster, pca-dimension-reduction]
+        arguments:
+          artifacts:
+          - {name: find-optimal-k-cluster-optimal_k_cluster, from: '{{tasks.find-optimal-k-cluster.outputs.artifacts.find-optimal-k-cluster-optimal_k_cluster}}'}
+          - {name: pca-dimension-reduction-pca_result, from: '{{tasks.pca-dimension-reduction.outputs.artifacts.pca-dimension-reduction-pca_result}}'}
+      - name: pca-dimension-reduction
+        template: pca-dimension-reduction
+        dependencies: [embedding]
+        arguments:
+          artifacts:
+          - {name: embedding-embeddings, from: '{{tasks.embedding.outputs.artifacts.embedding-embeddings}}'}
+      - name: preprocess-input-text
+        template: preprocess-input-text
+        arguments:
+          parameters:
+          - {name: paragraph, value: '{{inputs.parameters.paragraph}}'}
+      - name: tf-idf
+        template: tf-idf
+        dependencies: [create-dataframe-from-top-nearest-indices-by-clusters]
+        arguments:
+          artifacts:
+          - {name: create-dataframe-from-top-nearest-indices-by-clusters-documents,
+            from: '{{tasks.create-dataframe-from-top-nearest-indices-by-clusters.outputs.artifacts.create-dataframe-from-top-nearest-indices-by-clusters-documents}}'}
+  arguments:
+    parameters:
+    - {name: paragraph}
+  serviceAccountName: pipeline-runner
