@@ -1,0 +1,5 @@
+./pipeline.yaml
+.idea
+.env
+.DS_Store
+/kubeflow/generate_qcm/
