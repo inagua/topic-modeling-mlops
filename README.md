@@ -2,6 +2,7 @@
 
 This is a sample pipeline that demonstrates how to perform topic modeling using [Kubeflow Pipelines](https://www.kubeflow.org/docs/pipelines/overview/pipelines-overview/).
 
+Video for introduction: https://www.youtube.com/watch?v=90hPRXiBn4U
 ## Prerequisites
 * kubectl
 * Cluster (Minikube, docker desktop, ...)
@@ -16,12 +17,12 @@ kubectl apply -k "github.com/kubeflow/pipelines/manifests/kustomize/env/platform
 ```
 
 See if it's running correctly 
-```
+```shell
 kubectl get pods -A 
 ```
 
 ### Port-forward 
-```
+```shell
 kubectl port-forward -n kubeflow svc/ml-pipeline-ui 8080:80
 ```
 Goto -> http://localhost:8080
@@ -40,7 +41,7 @@ Goto -> http://localhost:8080
 * Two ways to run a pipeline:
   * Upload .yaml file
     * Example: [pipeline_topic_modeling.yaml](kubeflow/pipeline_topic_modeling.yaml)
-  * Run via python script - client 
+  * Run via kubeflow SDK - client 
     * Example: [pipeline.py](kubeflow/pipeline.py)
 
 *** 
@@ -72,11 +73,11 @@ kubectl wait --for condition=established --timeout=60s crd/applications.app.k8s.
 kubectl apply -k "github.com/kubeflow/pipelines/manifests/kustomize/env/$KFP_PLATFORM?ref=$KFP_VERSION"
 ```
 
-```
+```shell
 kubectl port-forward -n kubeflow svc/ml-pipeline-ui 8080:80
 ```
 
-```
-kubectl delete -k "github.com/kubeflow/pipelines/manifests/kustomize/cluster-scoped-resources?ref=$KFP_VERSION"
+```shell
 kubectl delete -k "github.com/kubeflow/pipelines/manifests/kustomize/env/$KFP_PLATFORM?ref=$KFP_VERSION"
+kubectl delete -k "github.com/kubeflow/pipelines/manifests/kustomize/cluster-scoped-resources?ref=$KFP_VERSION"
 ```
