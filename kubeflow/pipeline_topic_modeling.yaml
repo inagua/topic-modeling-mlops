@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   generateName: topic-modeling-pipeline-
-  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.14, pipelines.kubeflow.org/pipeline_compilation_time: '2022-10-25T11:23:28.278610',
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.14, pipelines.kubeflow.org/pipeline_compilation_time: '2022-10-26T16:10:44.185232',
     pipelines.kubeflow.org/pipeline_spec: '{"description": "Topic Modeling Pipeline",
       "inputs": [{"name": "paragraph"}], "name": "Topic Modeling Pipeline"}'}
   labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.14}

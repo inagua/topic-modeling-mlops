@@ -2,6 +2,7 @@ import re
 import argparse
 import time
 import pandas as pd
+from pathlib import Path
 
 
 def preprocess_input_text_(paragraph):
@@ -17,6 +18,7 @@ def preprocess_input_text_(paragraph):
     documents = {
         'paragraph': output_string
     }
+    Path('paragraph.csv').touch()
     pd.DataFrame(documents).to_csv("paragraph.csv")
     # with open("app/text.txt", 'w') as writer:
     #     writer.write(str(output_string))

@@ -109,7 +109,7 @@ def tf_idf_op(documents_path):
 def generate_qcm_op(documents_path):
     return dsl.ContainerOp(
         name='Generate QCM',
-        image='thekenken/generate_qcm:latest',
+        image='python:3.8',
         command=['python', './qcm.py'],
         arguments=["--documents_path", documents_path],
         file_outputs={
