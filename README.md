@@ -2,7 +2,10 @@
 
 This is a sample pipeline that demonstrates how to perform topic modeling using [Kubeflow Pipelines](https://www.kubeflow.org/docs/pipelines/overview/pipelines-overview/).
 
-Video for introduction: https://www.youtube.com/watch?v=90hPRXiBn4U
+Video for introduction: 
+* https://www.youtube.com/watch?v=90hPRXiBn4U
+* https://www.youtube.com/watch?v=gd7mr1G-4U0&t=1151s
+
 ## Prerequisites
 * kubectl
 * Cluster (Minikube, docker desktop, ...)
