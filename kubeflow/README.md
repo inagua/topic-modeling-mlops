@@ -11,7 +11,7 @@ Preprocess input text -> Embedding -> PCA -> find optimal number of clusters -> 
 
 ## To create all images
 Your docker user: 
-```
+```shell
 export HUB_USER=thekenken
 ```
 
@@ -70,7 +70,10 @@ You should see the Kubeflow Pipelines dashboard like this:
 ### Create new images and push to docker hub (Optional) 
 Local: If you are on Apple Silicon M1, you need to rebuild the images locally and push to docker hub. Because the architecture on GCP is not an arm64. 
 https://medium.com/geekculture/from-apple-silicon-to-heroku-docker-registry-without-swearing-36a2f59b30a3
-
+Your docker user: 
+```shell
+export HUB_USER=thekenken
+```
 ```shell
 docker buildx build --platform linux/amd64 -t $HUB_USER/preprocess_input_text preprocess_input_text/ && docker buildx build --platform linux/amd64 -t $HUB_USER/embedding embedding/ && docker buildx build --platform linux/amd64 -t $HUB_USER/pca pca/ && docker buildx build --platform linux/amd64 -t $HUB_USER/find_optimal_number_of_clusters find_optimal_number_of_clusters/ && docker buildx build --platform linux/amd64 -t $HUB_USER/kmeans kmeans/ && docker buildx build --platform linux/amd64 -t $HUB_USER/create_df_from_top_nearest_indices create_df_from_top_nearest_indices/ && docker buildx build --platform linux/amd64 -t $HUB_USER/preprocess_documents preprocess_documents/ && docker buildx build --platform linux/amd64 -t $HUB_USER/tf_idf tf_idf/ && docker push $HUB_USER/preprocess_input_text && docker push $HUB_USER/embedding && docker push $HUB_USER/pca && docker push $HUB_USER/find_optimal_number_of_clusters && docker push $HUB_USER/kmeans && docker push $HUB_USER/create_df_from_top_nearest_indices && docker push $HUB_USER/preprocess_documents && docker push $HUB_USER/tf_idf
 ```
