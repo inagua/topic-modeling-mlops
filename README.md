@@ -1,13 +1,23 @@
 # Kubeflow pipeline 
 
+![](img/kubeflow-logo.png)
+
 This is a sample pipeline that demonstrates how to perform topic modeling using [Kubeflow Pipelines](https://www.kubeflow.org/docs/pipelines/overview/pipelines-overview/).
 
 Video for introduction: 
 * https://www.youtube.com/watch?v=90hPRXiBn4U
 * https://www.youtube.com/watch?v=gd7mr1G-4U0&t=1151s
 
+## Information about project: 
+* `notebooks/`: notebook for deploy kubeflow pipeline on aws eks sagemaker
+* `kubeflow/`: How to create a kubeflow pipeline
+* `old_pipeline.py`:Another way to create a simple kubeflow pipeline (not cleaned)
+* `img/`: images for README.md
+* `.github/workflows/`: GitHub actions for build and push docker images to docker hub (commented, not working for now)
+
+
 ## Prerequisites
-* kubectl
+* kubectl - install [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 * Cluster (Minikube, docker desktop, ...)
 
 ## Install Kubeflow pipeline - local 
