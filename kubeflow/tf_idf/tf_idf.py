@@ -92,6 +92,7 @@ def tf_idf(documents):
     data_lemmatized = lemmatization(data_words_bigrams)
     print("data lemmatized : \n", data_lemmatized)
     print("\n ======================== \n")
+    print("len(data_lemmatized) : ", len(data_lemmatized))
 
     tfIdfVectorizer = TfidfVectorizer(analyzer='word', stop_words='english', use_idf=True)
     tfIdf = tfIdfVectorizer.fit_transform(data_lemmatized)
@@ -100,18 +101,24 @@ def tf_idf(documents):
     for i in range(len(data_lemmatized)):
         df_tfidf = pd.DataFrame(tfIdf[i].T.todense(), index=tfIdfVectorizer.get_feature_names(), columns=['TF-IDF'])
         df_tfidf = df_tfidf.sort_values('TF-IDF', ascending=False)
-        # print(" TF-IDF - cluster n°{} : \n\n {}".format(i, df_tfidf.head(5)))
+        print(" TF-IDF - cluster n°{} : \n\n {}".format(i, df_tfidf.head(5)))
         # top_words = {i: df_tfidf.head(5)}  # .index.tolist()
-        top_words[i].append(df_tfidf.head(5))  # .index.tolist()
-        print("top_words[i] = ", top_words[i])
+        tf_idf_dict = {
+            'cluster': i,
+            'top_words': df_tfidf.head(5).index.tolist()
+        }
+        top_words.append(tf_idf_dict)
+        # top_words[i].append(df_tfidf.head(5))  # .index.tolist()
+        # print("top_words[i] = ", top_words[i])
         print("\n ========================================================================== \n")
     print("top_words = ", top_words)
-    top_words = pd.concat(top_words)
+    output = pd.DataFrame(top_words)
+    # top_words = pd.concat(top_words)
     # words = {
     #     "top_words": top_words
     # }
     Path('top_words.csv').touch()
-    top_words.to_csv("top_words.csv")
+    output.to_csv("top_words.csv")
 
 
 if __name__ == "__main__":
