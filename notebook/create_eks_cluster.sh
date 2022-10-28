@@ -1,0 +1,1 @@
+eksctl create cluster --name kubeflow --version 1.15 --region eu-west-3 --nodegroupe-name cpu-nodes --node-type c5.xlarge --nodes 2 --node-volume-size 50 --node-zones eu-west-3a --timeout=40m --auto-kubeconfig
