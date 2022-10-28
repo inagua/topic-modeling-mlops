@@ -52,6 +52,7 @@ https://calculator.aws/#/
         + (+) Implementation
         + (+) Model monitoring
         + (+) Control and scale environment effortlessly
+        + (+) Great for MLOps 
         + (+) Getting charged when active
         - (-) Cost astronomical
         - (-) Customization
@@ -79,7 +80,17 @@ https://calculator.aws/#/
 
 ***
 
-# Deploy and Manage Kubeflow on AWS SageMaker (Finish Later)
+
+# Deploy and Manage Kubeflow on AWS EKS (test -> see later) 
+
+This is a demo to deploy and manage Kubeflow on AWS EKS. 
+https://github.com/data-science-on-aws/data-science-on-aws
+
+## Prerequisites
+1. AWS account
+2. EKS Cluster 
+3. SageMaker Studio 
+
 
 ### SageMaker 
 SageMaker is AWS’s fully managed, end-to-end platform covering the entire ML workflow within many frameworks. 
@@ -95,17 +106,3 @@ SageMaker is AWS’s fully managed, end-to-end platform covering the entire ML w
 * Tensor RT - model deployment 
 * Katib - Hyper-param-tuning 
 
-
-
-
-***
-
-# Deploy and Manage Kubeflow on AWS EKS (test -> see later) 
-
-This is a demo to deploy and manage Kubeflow on AWS EKS. 
-https://github.com/data-science-on-aws/data-science-on-aws
-
-## Prerequisites
-1. AWS account
-2. EKS Cluster 
-3. SageMaker Studio 
