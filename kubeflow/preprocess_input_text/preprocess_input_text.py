@@ -5,10 +5,13 @@ import pandas as pd
 from pathlib import Path
 
 
-def preprocess_input_text_(paragraph):
+def preprocess_input_text_(paragraph: str) -> pd.DataFrame:
+    paragraph = paragraph.replace(r'\n', ' ', regex=True)
     # Remove new line characters
     paragraph = str(paragraph)
     paragraph = [re.sub('\s+', ' ', sent) for sent in paragraph]
+    # remove unecessary newline characters
+    paragraph = [re.sub('\\n', ' ', sent) for sent in paragraph]
     # Remove distracting single quotes
     paragraph = [re.sub("\'", "", sent) for sent in paragraph]
     paragraph = "".join(paragraph)
@@ -20,9 +23,6 @@ def preprocess_input_text_(paragraph):
     }
     Path('paragraph.csv').touch()
     pd.DataFrame(documents).to_csv("paragraph.csv")
-    # with open("app/text.txt", 'w') as writer:
-    #     writer.write(str(output_string))
-    # return output_string
 
 
 if __name__ == '__main__':
