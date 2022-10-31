@@ -1,6 +1,14 @@
 # Amazon Web Services 
-## Comparison - EC2 vs EKS vs SageMaker
 
+This directory contains the code to run the Kubeflow pipeline on Amazon Web Services (AWS). 
+
+Go check this [link](https://github.com/data-science-on-aws/data-science-on-aws
+) for more information on how to deploy Kubeflow notebook on AWS.
+
+
+
+## Comparison - EC2 vs EKS vs SageMaker
+First, we need to know our needs and requirements for the project, to decide which machine or service from AWS we need to use. 
 
 | Services  | Cost      |
 |-----------|---------  |
@@ -29,6 +37,8 @@ https://calculator.aws/#/
 300,00 Instances de bloc-notes Studio x 10 heures par jour x 5 jours par mois = 15 000,00 Heures SageMaker Studio Notebook par mois
 15 000,00 heures par mois x 0,242 USD coût d'instance par heure = 3 630,00 USD
 
+***Note***: *The cost of SageMaker is very high, so we will not use it for this project.*
+***
 * <u>**Pros and Cons**</u>:
     * <u>EC2</u>: 
         * (+) Cost
@@ -62,6 +72,7 @@ https://calculator.aws/#/
 * https://www.cloudforecast.io/blog/ecs-vs-eks/
 
 ### More Services to take advantage of AWS 
+We also have other services that we can use to take advantage of AWS.  
 
 | Services   | Cost |
 |------------|------|
