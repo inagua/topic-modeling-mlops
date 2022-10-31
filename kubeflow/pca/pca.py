@@ -1,21 +1,15 @@
 import numpy as np
 from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler #, LabelEncoder  # , RobustScaler, robust_scale, MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 import argparse
 
 
-def pca_dimension_reduction(embeddings):
+def pca_dimension_reduction(embeddings: np.ndarray) -> np.ndarray:
     embeddings_data = np.load(embeddings)
     print("embeddings_data.shape: ", embeddings_data.shape)
     print("embeddings_data: ", embeddings_data)
-    # le = LabelEncoder()
-    # encoded = le.fit(embeddings)
-    # np.set_printoptions(suppress=True)
-    # embeddings = np.array(embeddings)
     # scaler = StandardScaler()
     # data_rescaled = scaler.fit_transform(embeddings_data)  # rescale embeddings
-    # print("data_rescaled.shape: ", data_rescaled.shape)
-    # print("data_rescaled: ", data_rescaled)
     # find the optimal number of components for PCA
     pca = PCA(n_components=0.95)
     result = pca.fit(embeddings_data)
@@ -24,11 +18,8 @@ def pca_dimension_reduction(embeddings):
     # apply PCA
     pca = PCA(n_components=n_components)
     output_pca_result = pca.fit_transform(embeddings_data)
-    print("output_pca_result shape: ", output_pca_result.shape)
-    print(" output_pca_result : ", output_pca_result)
     # write output_pca_result in a file
     np.save("pca_result.npy", output_pca_result)
-    # return output_pca_result
 
 
 if __name__ == '__main__':

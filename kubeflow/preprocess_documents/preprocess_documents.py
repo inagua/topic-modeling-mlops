@@ -12,15 +12,9 @@ def preprocess_documents_(documents_path):
         temp.append("".join(documents[i]))
     documents = temp
     output_documents = " ".join(documents)
-    # courses = {
-    #     'documents': output_documents
-    # }
-    # documents = pd.DataFrame(courses)
-    # documents.to_csv("documents.csv")
     Path('documents.txt').touch()
     with open("documents.txt", 'w') as writer:
         writer.write(output_documents)
-    # return output_documents
 
 
 if __name__ == '__main__':

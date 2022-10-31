@@ -71,28 +71,17 @@ def lemmatization(texts, allowed_postags=["NOUN", "ADJ", "VERB", "ADV"]):
     return texts_out
 
 
-def tf_idf(documents):
-    # with open(documents, 'r') as f:
-    #     documents = f.read()
+def tf_idf(documents: Path) -> pd.DataFrame:
+
     documents = pd.read_csv(documents)['documents']
-    print("documents: ", documents)
-    print("documents type: ", type(documents))
     data_words = list(gen_words(documents))
-    print('data words:', data_words[0][0:20])
     bigram_mod, trigram_mod = create_bigram_trigram(data_words)
     # remove stopwords
     data_words_nostops = remove_stopwords(data_words)
-    print("data word no stops : \n", data_words_nostops)
-    print("\n ======================== \n")
     # form bigrams
     data_words_bigrams = make_bigrams(data_words_nostops, bigram_mod)
-    print("data words bigrams : \n", data_words_bigrams)
-    print("\n ======================== \n")
 
     data_lemmatized = lemmatization(data_words_bigrams)
-    print("data lemmatized : \n", data_lemmatized)
-    print("\n ======================== \n")
-    print("len(data_lemmatized) : ", len(data_lemmatized))
 
     tfIdfVectorizer = TfidfVectorizer(analyzer='word', stop_words='english', use_idf=True)
     tfIdf = tfIdfVectorizer.fit_transform(data_lemmatized)
@@ -102,21 +91,13 @@ def tf_idf(documents):
         df_tfidf = pd.DataFrame(tfIdf[i].T.todense(), index=tfIdfVectorizer.get_feature_names(), columns=['TF-IDF'])
         df_tfidf = df_tfidf.sort_values('TF-IDF', ascending=False)
         print(" TF-IDF - cluster n°{} : \n\n {}".format(i, df_tfidf.head(5)))
-        # top_words = {i: df_tfidf.head(5)}  # .index.tolist()
         tf_idf_dict = {
             'cluster': i,
             'top_words': df_tfidf.head(5).index.tolist()
         }
         top_words.append(tf_idf_dict)
-        # top_words[i].append(df_tfidf.head(5))  # .index.tolist()
-        # print("top_words[i] = ", top_words[i])
-        print("\n ========================================================================== \n")
-    print("top_words = ", top_words)
+
     output = pd.DataFrame(top_words)
-    # top_words = pd.concat(top_words)
-    # words = {
-    #     "top_words": top_words
-    # }
     Path('top_words.csv').touch()
     output.to_csv("top_words.csv")
 

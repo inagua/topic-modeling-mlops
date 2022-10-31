@@ -3,7 +3,7 @@ import numpy as np
 import argparse
 
 
-def create_dataframe_from_top_nearest_indices(top_nearest_indices_by_clusters, text):
+def create_dataframe_from_top_nearest_indices(top_nearest_indices_by_clusters: np.ndarray, text: str) -> pd.DataFrame:
     text = pd.read_csv(text)['paragraph']
     top_nearest_indices_by_clusters = np.load(top_nearest_indices_by_clusters)
     all_documents = []
@@ -19,9 +19,6 @@ def create_dataframe_from_top_nearest_indices(top_nearest_indices_by_clusters, t
     }
     documents = pd.DataFrame(courses)
     documents.to_csv("documents.csv")
-    # with open(outputs_documents, 'w') as w:
-    #     w.write(documents)
-    # return documents
 
 
 if __name__ == '__main__':

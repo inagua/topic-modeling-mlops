@@ -1,15 +1,13 @@
 import kfp
 from kfp import dsl
+import pandas as pd
 
 
 def preprocess_input_text_op(paragraph):
     return dsl.ContainerOp(
         name='preprocess_input_text',
         image='thekenken/preprocess_input_text:latest',
-        # image='python:3.8-slim',
-        # command=["python", -u, -m, "kfp_component.launcher"],
         command=['python', './preprocess_input_text.py'],
-        # command=['python', './preprocess_input_text/preprocess_input_text.py'],
         arguments=['--paragraph', paragraph],
         file_outputs={
             'paragraph': '/app/paragraph.csv',
@@ -17,12 +15,10 @@ def preprocess_input_text_op(paragraph):
     )
 
 
-# preprocess_input_text_op.output
 def embedding_op(text):
     return dsl.ContainerOp(
         name='embedding',
         image='thekenken/embedding:latest',
-        # command=['python', './embedding/embeddings.py'],
         command=['python', './embeddings.py'],
         arguments=['--paragraph', text],
         file_outputs={
@@ -123,13 +119,11 @@ def generate_qcm_op(documents_path):
     description='Topic Modeling Pipeline'
 )
 def topic_modeling_pipeline(paragraph):
-    _preprocess_input_text = preprocess_input_text_op((paragraph))
+    _preprocess_input_text = preprocess_input_text_op(paragraph)
 
     _embedding = embedding_op(dsl.InputArgumentPath(_preprocess_input_text.outputs['paragraph'])).after(
         _preprocess_input_text)
-    # _embedding = embedding_op(dsl.InputArgumentPath(_preprocess_input_text.outputs))
 
-    # _pca_dimension_reduction = pca_dimension_reduction_op(_embedding.outputs['embeddings']).after(_embedding)
     _pca_dimension_reduction = pca_dimension_reduction_op(
         dsl.InputArgumentPath(_embedding.outputs['embeddings'])).after(_embedding)
 
@@ -145,20 +139,9 @@ def topic_modeling_pipeline(paragraph):
         _kmeans,
         _preprocess_input_text)
 
-    # _preprocess_documents = preprocess_documents_op(
-    #     dsl.InputArgumentPath(_create_dataframe.outputs['documents'])).after(_create_dataframe)
-
     _tf_idf = tf_idf_op(dsl.InputArgumentPath(_create_dataframe.outputs['documents'])).after(_create_dataframe)
 
-    # _generate_qcm = generate_qcm_op(dsl.InputArgumentPath(_preprocess_documents.outputs['documents'])).after(
-    #     _preprocess_documents)
-
     return _tf_idf
-
-
-# from sklearn.datasets import fetch_20newsgroups
-import pandas as pd
-import time
 
 
 if __name__ == '__main__':
@@ -169,16 +152,18 @@ if __name__ == '__main__':
     # )
     # news_df = pd.DataFrame({'News': data.data,
     #                         'Target': data.target})
-    news_df = pd.read_csv('20newgroups.csv', engine='python', encoding='utf-8')["News"]
+    news_df = pd.read_csv('20newgroups.csv', engine='python', encoding='utf-8')[
+        "News"]  # call fetch_20newsgroups from sklearn.datasets
     print("news_df.shape", news_df.shape)
     print("news_df.head()", news_df.head())
 
     client = kfp.Client()
     client.create_run_from_pipeline_func(topic_modeling_pipeline, arguments={
         "paragraph": news_df})
-    # "paragraph": "The Elder Scrolls V: Skyrim is an action role-playing video game developed by Bethesda Game Studios and published by Bethesda Softworks. It is the fifth main installment in The Elder Scrolls series, following The Elder Scrolls IV: Oblivion.The game's main story revolves around the player character's quest to defeat Alduin the World-Eater, a dragon who is prophesied to destroy the world. The game is set 200 years after the events of Oblivion and takes place in the fictional province of Skyrim. Over the course of the game, the player completes quests and develops the character by improving skills. The game continues the open-world tradition of its predecessors by allowing the player to travel anywhere in the game world at any time, and to ignore or postpone the main storyline indefinitely.The team opted for a unique and more diverse open world than Oblivion's Imperial Province of Cyrodiil, which game director and executive producer Todd Howard considered less interesting by comparison. The game was released to critical acclaim, with reviewers particularly mentioning the character advancement and setting, and is considered to be one of the greatest video games of all time. "})
-    # "paragraph": "Machine learning (ML) is the scientific study of algorithms and statistical models that computer systems use to progressively improve their performance on a specific task. Machine learning algorithms build a mathematical model of sample data, known as ‘training data’, in order to make predictions or decisions without being explicitly programmed to perform the task. Machine learning algorithms are used in the applications of email filtering, detection of network intruders, and computer vision, where it is infeasible to develop an algorithm of specific instructions for performing the task. Machine learning is closely related to computational statistics, which focuses on making predictions using computers. The study of mathematical optimization delivers methods, theory and application domains to the field of machine learning. Data mining is a field of study within machine learning, and focuses on exploratory data analysis through unsupervised learning.In its application across business problems, machine learning is also referred to as predictive analytics."})
 
+    '''
+    Run the compiler to generate the pipeline yaml file and upload it to the kubeflow pipeline
+    '''
     # kfp.compiler.Compiler().compile(
     #     pipeline_func=topic_modeling_pipeline,
     #     package_path='pipeline_topic_modeling.yaml')
