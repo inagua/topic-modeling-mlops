@@ -5,6 +5,11 @@ import argparse
 
 
 def pca_dimension_reduction(embeddings: np.ndarray) -> np.ndarray:
+    """
+    Reduce the dimensionality of the embeddings using PCA while saving 95% of the information.
+    :param embeddings: numpy array of shape (n_samples, n_features)
+    :return: pca_result: numpy array of shape (n_samples, n_components)
+    """
     embeddings_data = np.load(embeddings)
     print("embeddings_data.shape: ", embeddings_data.shape)
     print("embeddings_data: ", embeddings_data)

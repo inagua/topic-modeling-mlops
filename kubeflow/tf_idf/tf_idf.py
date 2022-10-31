@@ -72,6 +72,8 @@ def lemmatization(texts, allowed_postags=["NOUN", "ADJ", "VERB", "ADV"]):
 
 
 def tf_idf(documents: Path) -> pd.DataFrame:
+    """ Compute TF-IDF for a list of documents.
+    Returns: Pandas DataFrame with TF-IDF words for each document."""
 
     documents = pd.read_csv(documents)['documents']
     data_words = list(gen_words(documents))

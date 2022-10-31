@@ -4,6 +4,8 @@ import argparse
 
 
 def fit_kmeans_and_find_nearest_topic_clusters(n_clusters_optimal: int, pca_result: np.ndarray) -> np.ndarray:
+    """ Fit KMeans to the PCA result and find the nearest topic clusters. Returns 5 nearest topic clusters for each cluster.
+    -> top_nearest_indices_by_clusters.npy """
     pca_result = np.load(pca_result)
     n_clusters_optimal = int(np.load(n_clusters_optimal))
     kmeans_model = KMeans(n_clusters=int(n_clusters_optimal), random_state=0)

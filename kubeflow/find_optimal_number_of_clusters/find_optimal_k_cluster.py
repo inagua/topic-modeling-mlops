@@ -5,6 +5,8 @@ import numpy as np
 
 
 def find_optimal_k_cluster(pca_result: np.ndarray) -> int:
+    """ Find the optimal number of clusters using the elbow method. Returns the optimal number of clusters.
+    -> optimal_k_cluster.npy """
     pca_result_data = np.load(pca_result)
     # find the optimal number of clusters
     ks = range(2, 9)
