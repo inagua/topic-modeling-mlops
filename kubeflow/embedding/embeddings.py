@@ -5,6 +5,9 @@ import pandas as pd
 
 
 def embedding(text: str) -> np.ndarray:
+
+    """Embeds a paragraph of text. Returns a numpy ndarray -> embedding.npy """
+
     spacy.cli.download("en_core_web_sm")
     embed = spacy.load("en_core_web_sm")
     text = np.array(pd.read_csv(text)['paragraph'])

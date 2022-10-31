@@ -4,6 +4,9 @@ import argparse
 
 
 def create_dataframe_from_top_nearest_indices(top_nearest_indices_by_clusters: np.ndarray, text: str) -> pd.DataFrame:
+    """ Create a dataframe from the top nearest indices by clusters and the text.
+        Returns a dataframe with the following columns: documents
+        If there is 5 clusters in the top_nearest_indices_by_clusters, the dataframe will have 5 documents"""
     text = pd.read_csv(text)['paragraph']
     top_nearest_indices_by_clusters = np.load(top_nearest_indices_by_clusters)
     all_documents = []
